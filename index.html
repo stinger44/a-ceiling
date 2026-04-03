@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpha Ceiling | Премиальные натяжные потолки и тканевые стены</title>
+    <meta name="description"
+        content="Установка натяжных потолков и тканевых стен 'Тихие Стены' с премиальным дизайном. Чистый монтаж, официальный дилер.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=4">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="container header-container">
+            <a href="#" class="logo logo-link"><img src="images/logo.jpg" alt="Alpha Ceiling" class="logo-img"></a>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html">Тканевые стены</a></li>
+                    <li><a href="ceilings.html">Натяжные потолки</a></li>
+                    <li><a href="#advantages">Преимущества</a></li>
+                    <li><a href="#gallery">Галерея</a></li>
+                    <li><a href="#reviews">Отзывы</a></li>
+                </ul>
+            </nav>
+            <div class="header-contact">
+                <a href="tel:+79996520212" class="phone">+7 (999) 652-02-12</a>
+                <button class="btn btn-outline" onclick="openModal()">Заказать звонок</button>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-content">
+            <ul class="mobile-nav-list">
+                <li><a href="index.html">Тканевые стены</a></li>
+                <li><a href="ceilings.html">Натяжные потолки</a></li>
+                <li><a href="#advantages">Преимущества</a></li>
+                <li><a href="#gallery">Галерея</a></li>
+                <li><a href="#reviews">Отзывы</a></li>
+            </ul>
+            <a href="tel:+79996520212" class="mobile-phone">+7 (999) 652-02-12</a>
+            <button class="btn btn-primary" onclick="openModal()">Заказать звонок</button>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="hero-slide" style="background-image: url('images/fabric_wall_2.jpg');"></div>
+            <div class="hero-slide" style="background-image: url('images/fabric_wall_5.jpg');"></div>
+            <div class="hero-slide" style="background-image: url('images/fabric_wall_7.jpg');"></div>
+            <div class="hero-slide" style="background-image: url('images/fabric_wall_10.jpg');"></div>
+        </div>
+        <div class="container hero-content">
+            <h1>Тихие Стены</h1>
+            <p>Премиальный внешний вид и абсолютный акустический комфорт в вашем доме.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="openModal('Тканевые стены')">Вызвать мастера</button>
+                <a href="#gallery" class="btn btn-secondary">Наши работы</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advantages -->
+    <section id="advantages" class="advantages py-section">
+        <div class="container">
+            <h2 class="section-title">Почему выбирают нас</h2>
+            <div class="adv-grid">
+                <div class="adv-card">
+                    <div class="adv-icon">
+                        <!-- Acoustic: overlapping arcs -->
+                        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="8" y="18" width="8" height="12" rx="1" stroke="currentColor" stroke-width="2"/>
+                            <path d="M16 20L26 12V36L16 28" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M32 18C34.5 20 34.5 28 32 30" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M36 14C40.5 18 40.5 30 36 34" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="6" y1="42" x2="42" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3>Шумоизоляция</h3>
+                    <p>Специальная акустическая мембрана поглощает шум, создавая в комнате атмосферу тишины и уюта.</p>
+                </div>
+                <div class="adv-card">
+                    <div class="adv-icon">
+                        <!-- Premium: diamond with crosshair -->
+                        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <polygon points="24,6 42,24 24,42 6,24" stroke="currentColor" stroke-width="2"/>
+                            <polygon points="24,14 34,24 24,34 14,24" stroke="currentColor" stroke-width="2"/>
+                            <line x1="24" y1="2" x2="24" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="24" y1="34" x2="24" y2="46" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="2" y1="24" x2="14" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="34" y1="24" x2="46" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3>Премиум дизайн</h3>
+                    <p>Идеально ровная матовая поверхность ткани премиум-класса выглядит роскошно и стильно в любом
+                        интерьере.</p>
+                </div>
+                <div class="adv-card">
+                    <div class="adv-icon">
+                        <!-- Installation: wrench -->
+                        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M34 6C29.6 6 26 9.6 26 14C26 15.4 26.4 16.7 27 17.8L8 36.8C7 37.8 7 39.4 8 40.4L8.6 41C9.6 42 11.2 42 12.2 41L31.2 22C32.3 22.6 33.6 23 35 23C39.4 23 43 19.4 43 15C43 13.6 42.6 12.3 42 11.2L37.4 15.8L33.2 15.8L33.2 11.6L37.8 7C36.7 6.4 35.4 6 34 6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Быстрый монтаж</h3>
+                    <p>Установка происходит без грязных работ, пыли и запаха за рекордные сроки.</p>
+                </div>
+                <div class="adv-card">
+                    <div class="adv-icon">
+                        <!-- Eco/Breathable: hexagon with circuit dot -->
+                        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <polygon points="24,4 42,14 42,34 24,44 6,34 6,14" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <circle cx="24" cy="24" r="5" stroke="currentColor" stroke-width="2"/>
+                            <line x1="24" y1="4" x2="24" y2="19" stroke="currentColor" stroke-width="2"/>
+                            <line x1="24" y1="29" x2="24" y2="44" stroke="currentColor" stroke-width="2"/>
+                            <line x1="6" y1="14" x2="19.3" y2="20.5" stroke="currentColor" stroke-width="2"/>
+                            <line x1="28.7" y1="27.5" x2="42" y2="34" stroke="currentColor" stroke-width="2"/>
+                            <line x1="42" y1="14" x2="28.7" y2="20.5" stroke="currentColor" stroke-width="2"/>
+                            <line x1="19.3" y1="27.5" x2="6" y2="34" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3>Эко-материалы</h3>
+                    <p>Ткань гипоаллергенна, пропускает воздух ("дышит") и абсолютно безопасна.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Gallery -->
+    <section id="gallery" class="gallery py-section bg-light">
+        <div class="container" style="text-align: center;">
+            <h2 class="section-title">Наши работы</h2>
+            <p class="section-subtitle" style="margin-bottom: 40px;">Ознакомьтесь с портфолио наших установок</p>
+            <a href="gallery.html" class="btn btn-primary gallery-cta">
+                Смотреть все фотографии
+            </a>
+        </div>
+    </section>
+
+    <!-- Reviews -->
+    <section id="reviews" class="reviews py-section">
+        <div class="container">
+            <h2 class="section-title">Отзывы клиентов</h2>
+            <p class="section-subtitle">Что говорят те, кто уже отдыхает под новыми потолками</p>
+
+            <div class="reviews-slider-container">
+                <button class="slider-btn prev-btn" id="prevBtn" aria-label="Предыдущий">&larr;</button>
+                <div class="reviews-track" id="reviewsTrack">
+                    <!-- Review 1 -->
+                    <div class="review-card">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Ребята сделали всё быстро, пыли почти не было. Парящий потолок в
+                            гостиной смотрится потрясающе! Обязательно буду рекомендовать соседям."</p>
+                        <div class="review-author">
+                            <div class="author-avatar">А</div>
+                            <div class="author-info">
+                                <h4>Александр Смирнов</h4>
+                                <span>Новостройка</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Review 2 -->
+                    <div class="review-card">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Очень аккуратный монтаж! Устанавливали теневой профиль на кухне. Никаких
+                            вставок, идеально ровный зазор. Спасибо мастеру Ивану."</p>
+                        <div class="review-author">
+                            <div class="author-avatar">Е</div>
+                            <div class="author-info">
+                                <h4>Екатерина В.</h4>
+                                <span>Дизайнерский ремонт</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Review 3 -->
+                    <div class="review-card">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Отличный сервис. Замерщик приехал в тот же день, всё посчитал, цена не
+                            изменилась в конце работы. Смонтировали 3 комнаты за один день. 10/10."</p>
+                        <div class="review-author">
+                            <div class="author-avatar">М</div>
+                            <div class="author-info">
+                                <h4>Михаил</h4>
+                                <span>Вторичное жилье</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="slider-btn next-btn" id="nextBtn" aria-label="Следующий">&rarr;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-col">
+                <a href="#" class="logo footer-logo logo-link"><img src="images/logo.jpg" alt="Alpha Ceiling"
+                        class="logo-img"></a>
+                <p>Премиальные натяжные потолки с гарантией качества и безупречным монтажом.</p>
+                <div class="social-links">
+                    <a href="#">VK</a>
+                    <a href="#">Telegram</a>
+                    <a href="#">WhatsApp</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Навигация</h4>
+                <ul>
+                    <li><a href="#advantages">О компании</a></li>
+                    <li><a href="#catalog">Виды потолков</a></li>
+                    <li><a href="#gallery">Галерея</a></li>
+                    <li><a href="#reviews">Отзывы</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Контакты</h4>
+                <p>г. Москва, ул. Примерная, 10</p>
+                <a href="tel:+79996520212" class="footer-phone">+7 (999) 652-02-12</a>
+                <p>info@alphaceiling.ru</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2026 Alpha Ceiling. Все права защищены.</p>
+                <a href="#">Политика конфиденциальности</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Form (Hidden) -->
+    <div class="modal" id="leadModal">
+        <div class="modal-dialog">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2>Заказать звонок</h2>
+            <p>Оставьте номер, и наш менеджер перезвонит вам в течение 5 минут.</p>
+            <form class="lead-form" onsubmit="event.preventDefault(); closeModal(); alert('Заявка отправлена!');">
+                <div class="form-group">
+                    <input type="text" placeholder="Ваше имя" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" placeholder="+7 (___) ___-__-__" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Перезвоните мне</button>
+                <p class="form-agreement">Нажимая кнопку, вы соглашаетесь с <a href="#">политикой конфиденциальности</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
