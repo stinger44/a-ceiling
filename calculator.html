@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Калькулятор площади | Alpha Ceiling</title>
+  <meta name="description" content="Рассчитайте площадь помещения и стоимость натяжных потолков онлайн. Графический конструктор плана комнаты.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="calculator.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="calc-header">
+    <a href="ceilings.html" class="logo-link">
+      <img src="images/logo.jpg" alt="Alpha Ceiling" class="logo-img">
+      <span class="logo-name">Alpha Ceiling</span>
+    </a>
+    <nav>
+      <a href="index.html">Тканевые стены</a>
+      <a href="ceilings.html">Натяжные потолки</a>
+      <a href="calculator.html" class="active">Калькулятор</a>
+    </nav>
+  </header>
+
+  <!-- PAGE TITLE -->
+  <div class="calc-page-title">
+    <h1>Калькулятор площади помещения</h1>
+    <p>Постройте план комнаты отрезок за отрезком — получите точную площадь и стоимость</p>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <main class="calc-layout">
+
+    <!-- ── LEFT PANEL: CONTROLS ── -->
+    <aside class="panel">
+      <div class="panel-title">Параметры отрезка</div>
+
+      <!-- Length input -->
+      <div class="input-group">
+        <label for="segLength">Длина отрезка (см)</label>
+        <input
+          id="segLength"
+          type="number"
+          min="1"
+          max="99999"
+          step="1"
+          placeholder="например: 350"
+          autocomplete="off"
+        >
+      </div>
+
+      <!-- Direction picker -->
+      <div class="input-group">
+        <label>Направление <span style="color:var(--text-muted);font-size:.75rem">(или стрелки ↑↓←→)</span></label>
+        <div class="dir-grid">
+          <!-- Row 1: empty, up, empty -->
+          <div class="dir-placeholder"></div>
+          <button class="dir-btn" data-dir="up"    onclick="setDirection('up')"    title="Вверх">↑</button>
+          <div class="dir-placeholder"></div>
+          <!-- Row 2: left, center(indicator), right -->
+          <button class="dir-btn" data-dir="left"  onclick="setDirection('left')"  title="Влево">←</button>
+          <div class="dir-placeholder" style="border:1px solid var(--border);border-radius:6px;background:var(--bg-input);display:flex;align-items:center;justify-content:center;">
+            <span id="dirIndicator" style="font-size:.6rem;color:var(--accent-2)">•</span>
+          </div>
+          <button class="dir-btn" data-dir="right" onclick="setDirection('right')" title="Вправо">→</button>
+          <!-- Row 3: empty, down, empty -->
+          <div class="dir-placeholder"></div>
+          <button class="dir-btn" data-dir="down"  onclick="setDirection('down')"  title="Вниз">↓</button>
+          <div class="dir-placeholder"></div>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <button class="btn btn-primary" onclick="addSegment()" id="addSegBtn">
+        + Добавить отрезок
+      </button>
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="undoSegment()" title="Ctrl+Z">↩ Отменить</button>
+        <button class="btn btn-ghost" onclick="manualClose()" title="Замкнуть фигуру">⬡ Замкнуть</button>
+      </div>
+      <button class="btn btn-danger btn-ghost" onclick="resetAll()">✕ Сбросить всё</button>
+
+      <!-- Segments list -->
+      <div class="panel-title" style="margin-top:.25rem">Список отрезков</div>
+      <div class="seg-table-wrap">
+        <table class="seg-table">
+          <thead>
+            <tr>
+              <th>Метка</th>
+              <th>Длина</th>
+              <th>Напр.</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="segTableBody">
+            <tr><td colspan="4" class="seg-table-empty">Отрезки не добавлены</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </aside>
+
+    <!-- ── CENTER: CANVAS ── -->
+    <section class="canvas-wrap">
+      <div class="closed-badge" id="closedBadge">✓ Фигура замкнута</div>
+      <canvas id="roomCanvas"></canvas>
+      <div class="canvas-toolbar">
+        <span style="font-size:.8rem;color:var(--text-muted)">
+          Площадь: <span id="displayArea" style="color:var(--success);font-weight:700">0.00 м²</span>
+        </span>
+        <span style="font-size:.8rem;color:var(--text-muted);margin-left:1rem">
+          Периметр: <span id="displayPerim" style="color:var(--accent-2);font-weight:700">0.00 м</span>
+        </span>
+        <span class="canvas-info" style="font-size:.75rem;color:var(--text-muted)">
+          💡 Первая точка <span style="color:#f59e0b;font-weight:700">O</span> · каждый конец подписан буквой
+        </span>
+      </div>
+    </section>
+
+    <!-- ── RIGHT PANEL: RESULT ── -->
+    <aside class="panel">
+      <div class="panel-title">Расчёт стоимости</div>
+
+      <!-- Area summary -->
+      <div class="result-area">
+        <div class="result-row">
+          <span class="result-label">Площадь</span>
+          <span class="result-val accent" id="resultArea">0.00 м²</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Периметр</span>
+          <span class="result-val" id="resultPerim">0.00 м</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Отрезков</span>
+          <span class="result-val" id="resultSegs">0</span>
+        </div>
+      </div>
+
+      <!-- Price lines -->
+      <div class="panel-title" style="margin-top:.25rem">Позиции</div>
+      <div class="price-lines" id="priceLines">
+        <!-- JS-rendered -->
+      </div>
+      <button class="btn btn-ghost" onclick="addPriceLine()">+ Добавить позицию</button>
+
+      <!-- Total -->
+      <div class="total-block">
+        <div class="total-label">Итого</div>
+        <div class="total-sum" id="totalSum">0 ₽</div>
+        <div class="total-hint">Предварительный расчёт · уточняется при замере</div>
+      </div>
+
+      <!-- CTA buttons -->
+      <button class="btn btn-success" onclick="openLeadModal()">
+        📋 Отправить заявку
+      </button>
+      <button class="btn btn-ghost" onclick="openNomModal()">
+        ⚙ Управление номенклатурой
+      </button>
+    </aside>
+
+  </main>
+
+  <!-- ===== NOMENCLATURE MODAL ===== -->
+  <div class="modal-overlay" id="nomModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2>Номенклатура и цены</h2>
+        <button class="modal-close" onclick="closeNomModal()" aria-label="Закрыть">&times;</button>
+      </div>
+      <div class="modal-body">
+        <table class="nom-table">
+          <thead>
+            <tr>
+              <th>Наименование</th>
+              <th>Ед.</th>
+              <th>Цена, ₽</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="nomTableBody"></tbody>
+        </table>
+
+        <!-- Add new row -->
+        <div class="nom-add-row">
+          <input id="newNomName"  type="text"   placeholder="Новая позиция" style="flex:2">
+          <input id="newNomUnit"  type="text"   placeholder="м²" style="width:50px">
+          <input id="newNomPrice" type="number" placeholder="Цена" min="1" style="width:90px">
+          <button class="btn btn-primary btn-sm" onclick="addNomItem()">+ Добавить</button>
+        </div>
+
+        <p style="font-size:.75rem;color:var(--text-muted)">
+          Данные хранятся локально в браузере. Изменения вступают в силу сразу.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LEAD FORM MODAL ===== -->
+  <div class="modal-overlay" id="leadModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2>Отправить заявку</h2>
+        <button class="modal-close" onclick="closeLeadModal()" aria-label="Закрыть">&times;</button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Form -->
+        <div id="leadFormContent">
+          <form onsubmit="submitLead(event)" style="display:flex;flex-direction:column;gap:.85rem">
+            <div class="lead-form-group">
+              <label for="leadName">Ваше имя</label>
+              <input id="leadName" type="text" placeholder="Иван Иванов" required>
+            </div>
+            <div class="lead-form-group">
+              <label for="leadPhone">Телефон</label>
+              <input id="leadPhone" type="tel" placeholder="+7 (___) ___-__-__" required>
+            </div>
+            <div class="lead-form-group">
+              <label for="leadSummary">Что считаем (автозаполнение)</label>
+              <textarea id="leadSummary" rows="5" readonly
+                style="font-size:.78rem;line-height:1.5;color:var(--text-muted)"></textarea>
+            </div>
+            <div class="lead-form-group">
+              <label for="leadComment">Комментарий</label>
+              <textarea id="leadComment" rows="2" placeholder="Дополнительная информация..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Отправить заявку →</button>
+            <p class="form-agreement">
+              Нажимая кнопку, вы соглашаетесь с <a href="#">политикой конфиденциальности</a>
+            </p>
+          </form>
+        </div>
+
+        <!-- Success state -->
+        <div class="success-msg" id="leadSuccess">
+          <div class="success-icon">✅</div>
+          <h3>Заявка отправлена!</h3>
+          <p>Наш менеджер свяжется с вами в течение 5 минут для уточнения деталей.</p>
+          <button class="btn btn-ghost" onclick="closeLeadModal()">Закрыть</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="calculator.js"></script>
+
+</body>
+</html>
