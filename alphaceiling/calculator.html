@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Онлайн-калькулятор площади и стоимости натяжного потолка в Сочи | Alpha Ceiling</title>
+    <meta name="description" content="Интерактивный калькулятор для построения чертежа комнаты и точного расчета цены натяжного потолка в Сочи. Узнайте стоимость онлайн за 2 минуты!">
+    
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://alphaceiling.ru/calculator.html">
+    <meta property="og:title" content="Онлайн-калькулятор натяжного потолка в Сочи | Alpha Ceiling">
+    <meta property="og:description" content="Постройте чертеж комнаты на холсте и мгновенно рассчитайте цену натяжного потолка в Сочи. Онлайн-расчет.">
+    <meta property="og:image" content="images/logo.jpg">
+    <meta property="og:site_name" content="Alpha Ceiling">
+    
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=12">
+    <link rel="stylesheet" href="css/calculator.css?v=3">
+</head>
+
+<body>
+
+  <header class="header">
+
+        <div class="container header-container">
+
+            <a href="index.html" class="logo logo-link" style="display: flex; align-items: center; gap: 10px;"><img src="images/logo.jpg" alt="Alpha Ceiling Logo" style="height: 40px; width: 40px; border-radius: 4px; object-fit: cover;"><span><span style="color:var(--color-accent);font-weight:800;">Alpha</span> Ceiling</span></a>
+
+            <nav class="nav">
+
+                <ul class="nav-list">
+
+                    <li><a href="index.html">Тканевые стены</a></li>
+
+                    <li><a href="ceilings.html">Натяжные потолки</a></li>
+
+                    <li><a href="index.html#advantages">Преимущества</a></li>
+
+                    <li><a href="gallery.html">Галерея</a></li>
+
+                    <li><a href="index.html#reviews">Отзывы</a></li>
+
+                    <li><a href="calculator.html" class="highlight">Калькулятор</a></li>
+
+                </ul>
+
+            </nav>
+
+            <div class="header-contact">
+
+                <a href="tel:+79996520212" class="phone">+7 (999) 652-02-12</a>
+
+                <a href="tel:+79996520212" class="btn btn-outline">Позвонить</a>
+
+            </div>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+
+                <span></span><span></span><span></span>
+
+            </button>
+
+        </div>
+
+    </header>
+<div class="mobile-nav" id="mobileNav">
+
+        <div class="mobile-nav-content">
+
+            <ul class="mobile-nav-list">
+
+                <li><a href="index.html">Тканевые стены</a></li>
+
+                <li><a href="ceilings.html">Натяжные потолки</a></li>
+
+                <li><a href="index.html#advantages">Преимущества</a></li>
+
+                <li><a href="gallery.html">Галерея</a></li>
+
+                <li><a href="index.html#reviews">Отзывы</a></li>
+
+                <li><a href="calculator.html" class="highlight">Калькулятор</a></li>
+
+            </ul>
+
+            <a href="tel:+79996520212" class="mobile-phone">+7 (999) 652-02-12</a>
+
+            <a href="tel:+79996520212" class="btn btn-primary">Позвонить</a>
+
+        </div>
+
+
+
+  <div class="calc-page-title">
+
+    <h1>Калькулятор площади</h1>
+
+    <p>Сочи — получите точную стоимость онлайн</p>
+
+  </div>
+
+
+
+  <main class="calc-layout">
+
+    <aside class="panel">
+
+      <div class="panel-title">Параметры</div>
+
+      <div class="input-group">
+
+        <label for="segLength">Длина (см)</label>
+
+        <input id="segLength" type="number" min="1" placeholder="например: 350">
+
+      </div>
+
+      <div class="input-group">
+
+        <label>Направление</label>
+
+        <div class="dir-grid">
+
+          <div></div><button class="dir-btn" onclick="setDirection('up')">↑</button><div></div>
+
+          <button class="dir-btn" onclick="setDirection('left')">←</button>
+
+          <div style="display:flex;align-items:center;justify-content:center;"><span id="dirIndicator">•</span></div>
+
+          <button class="dir-btn" onclick="setDirection('right')">→</button>
+
+          <div></div><button class="dir-btn" onclick="setDirection('down')">↓</button><div></div>
+
+        </div>
+
+      </div>
+
+      <button class="btn btn-primary" onclick="addSegment()">+ Добавить</button>
+
+      <div class="btn-row">
+
+        <button class="btn btn-ghost" onclick="undoSegment()">↩ Отмена</button>
+
+        <button class="btn btn-ghost" onclick="manualClose()">⬡ Замкнуть</button>
+
+      </div>
+
+      <button class="btn btn-danger btn-ghost" onclick="resetAll()">✕ Сбросить</button>
+
+    </aside>
+
+
+
+    <section class="canvas-wrap">
+
+      <div class="closed-badge" id="closedBadge">✓ Замкнуто</div>
+
+      <canvas id="roomCanvas"></canvas>
+
+      <div class="canvas-toolbar">
+
+        <span>Площадь: <span id="displayArea" style="color:#22d3a5;font-weight:700">0.00 м²</span></span>
+
+        <span style="margin-left:1rem">Периметр: <span id="displayPerim" style="color:#a78bfa;font-weight:700">0.00 м</span></span>
+
+      </div>
+
+    </section>
+
+
+
+    <aside class="panel">
+
+      <div class="panel-title">Итого</div>
+
+      <div class="result-area">
+
+        <div class="result-row"><span>Площадь</span><span id="resultArea">0.00 м²</span></div>
+
+        <div class="result-row"><span>Периметр</span><span id="resultPerim">0.00 м</span></div>
+
+      </div>
+
+      <div class="total-block">
+
+        <div class="total-label">Предварительно</div>
+
+        <div class="total-sum" id="totalSum">0 ₽</div>
+
+      </div>
+
+      <a href="tel:+79996520212" class="btn btn-success" style="text-decoration:none; display:block;">📞 Позвонить для замера</a>
+
+    </aside>
+
+  </main>
+
+
+
+    <!-- Cookie Banner -->
+
+    <div id="cookie-banner" style="position:fixed; bottom:20px; left:20px; right:20px; background:rgba(0,0,0,0.95); border:1px solid #262626; padding:20px; border-radius:12px; display:none; z-index:9999; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:15px; backdrop-filter:blur(10px);">
+
+        <p style="margin:0; font-size:14px; color:#9ca3af; max-width:800px;">Мы используем файлы cookie для улучшения работы сайта. Продолжая использовать сайт, вы соглашаетесь с обработкой данных.</p>
+
+        <button id="accept-cookies" class="btn btn-primary" style="padding:10px 20px;">Принять</button>
+
+    </div>
+
+
+
+    <!-- Telegram Button -->
+    <a href="https://t.me/+79996520212" target="_blank" class="telegram-btn" aria-label="Написать в Telegram">
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.68c.223-.198-.054-.31-.346-.11l-6.4 4.02-2.76-.89c-.6-.19-.61-.6.13-.89l10.79-4.16c.5-.19.93.11.75.89z"/>
+        </svg>
+    </a>
+
+
+
+  <footer class="footer">
+
+        <div class="container footer-container">
+
+            <div class="footer-col">
+
+                <a href="index.html" class="logo footer-logo logo-link" style="display: flex; align-items: center; gap: 10px;"><img src="images/logo.jpg" alt="Alpha Ceiling Logo" style="height: 40px; width: 40px; border-radius: 4px; object-fit: cover;"><span><span style="color:var(--color-accent);font-weight:800;">Alpha</span> Ceiling</span></a>
+
+                <p>Акустические тканевые стены и натяжные потолки в Сочи.</p>
+
+            </div>
+
+            <div class="footer-col">
+
+                <h4>Навигация</h4>
+
+                <ul>
+
+                    <li><a href="index.html">Тканевые стены</a></li>
+
+                    <li><a href="ceilings.html">Натяжные потолки</a></li>
+
+                    <li><a href="gallery.html">Галерея</a></li>
+
+                    <li><a href="calculator.html">Калькулятор</a></li>
+
+                </ul>
+
+            </div>
+
+            <div class="footer-col">
+
+                <h4>Контакты</h4>
+
+                <p>г. Сочи</p>
+
+                <a href="tel:+79996520212" class="footer-phone">+7 (999) 652-02-12</a>
+
+                <p>sochi@alphaceiling.ru</p>
+
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+
+            <div class="container"><p>&copy; 2026 Alpha Ceiling. Все права защищены.</p></div>
+
+        </div>
+
+    </footer>
+
+    <script src="js/script.js?v=2"></script>
+    <script src="js/calculator.js?v=3"></script>
+
+  <script>
+
+      document.addEventListener('DOMContentLoaded', function() {
+
+          if (!localStorage.getItem('cookie_accepted')) {
+
+              const b = document.getElementById('cookie-banner');
+
+              if(b) {
+
+                  b.style.display = 'flex';
+
+                  document.getElementById('accept-cookies').onclick = function() {
+
+                      localStorage.setItem('cookie_accepted', 'true');
+
+                      b.style.display = 'none';
+
+                  };
+
+              }
+
+          }
+
+      });
+
+  </script>
+
+</body>
+
+</html>
+
