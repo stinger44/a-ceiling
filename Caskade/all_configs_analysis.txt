@@ -1,0 +1,388 @@
+﻿log_format admin_fmt escape=none
+    '$time_iso8601 | INFO    | nginx      | $status $request_method $uri ($remote_addr, ${request_time}s)';
+
+server {
+    listen 80;
+    server_name localhost;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    sendfile off;
+    tcp_nopush on;
+    tcp_nodelay on;
+
+    set_real_ip_from 10.0.0.0/8;
+    set_real_ip_from 172.16.0.0/12;
+    set_real_ip_from 192.168.0.0/16;
+    set_real_ip_from fd00::/8;
+    real_ip_header X-Forwarded-For;
+    real_ip_recursive on;
+
+    resolver 127.0.0.11 valid=30s ipv6=off;
+
+    access_log /app/logs/nginx_access.log admin_fmt;
+    error_log  /app/logs/nginx_error.log warn;
+
+    location = /favicon.ico { access_log off; log_not_found off; try_files $uri =204; }
+    
+    gzip on;
+    gzip_types text/plain text/css text/javascript application/javascript application/json;
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+
+    # WebSocket proxy - explicit paths
+    location /api/v2/ws {
+        set $backend http://web-backend:8081;
+        proxy_pass $backend$request_uri;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+        proxy_read_timeout 3600s;
+    }
+
+    location /api/v2/agent/ws {
+        set $backend http://web-backend:8081;
+        proxy_pass $backend$request_uri;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+        proxy_read_timeout 3600s;
+    }
+
+    # API proxy
+    location /api/ {
+        set $backend http://web-backend:8081;
+        proxy_pass $backend$request_uri;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location / {
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        try_files $uri $uri/ /index.html;
+    }
+}
+log_format admin_fmt escape=none
+    '$time_iso8601 | INFO    | nginx      | $status $request_method $uri ($remote_addr, ${request_time}s)';
+
+server {
+    listen 80;
+    server_name localhost;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    sendfile off;
+    tcp_nopush on;
+    tcp_nodelay on;
+
+    set_real_ip_from 10.0.0.0/8;
+    set_real_ip_from 172.16.0.0/12;
+    set_real_ip_from 192.168.0.0/16;
+    set_real_ip_from fd00::/8;
+    real_ip_header X-Real-IP;
+    real_ip_recursive on;
+
+    resolver 127.0.0.11 valid=30s ipv6=off;
+
+    access_log /app/logs/nginx_access.log admin_fmt;
+    error_log  /app/logs/nginx_error.log warn;
+
+    location = /favicon.ico { access_log off; log_not_found off; try_files $uri =204; }
+    
+    gzip on;
+    gzip_types text/plain text/css text/javascript application/javascript application/json;
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+
+    # WebSocket proxy
+    location ~ ^/api/v2/(ws|agent/ws) {
+        set $backend http://web-backend:8081;
+        proxy_pass $backend$request_uri;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_read_timeout 3600s;
+    }
+
+    # API proxy
+    location /api/ {
+        set $backend http://web-backend:8081;
+        proxy_pass $backend$request_uri;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location / {
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        try_files $uri $uri/ /index.html;
+    }
+}
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name admin.panelhide.su;
+
+    ssl_certificate /etc/letsencrypt/live/admin.panelhide.su/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/admin.panelhide.su/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:3010;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # WebSocket support
+        proxy_connect_timeout 7d;
+        proxy_send_timeout 7d;
+        proxy_read_timeout 7d;
+    }
+}
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name admin.panelhide.su;
+
+    ssl_certificate /etc/letsencrypt/live/admin.panelhide.su/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/admin.panelhide.su/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:3010;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+
+        # Standard headers (removed UA override)
+        proxy_set_header User-Agent $http_user_agent;
+
+        # Buffering settings for stability
+        proxy_buffers 8 16k;
+        proxy_buffer_size 32k;
+    }
+}
+server {
+    listen 80;
+    server_name admin.panelhide.su;
+
+    location / {
+        proxy_pass http://127.0.0.1:3010;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+server {
+    server_name panelhide.su www.panelhide.su;
+
+
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    listen [::]:443 ssl ipv6only=on; # managed by Certbot
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/panelhide.su-0001/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/panelhide.su-0001/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+}
+
+server {
+    if ($host = panelhide.su) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    server_name panelhide.su www.panelhide.su;
+    return 404; # managed by Certbot
+}
+### APP ###
+APP_PORT=3000
+METRICS_PORT=3001
+
+### API ###
+# Possible values: max (start instances on all cores), number (start instances on number of cores), -1 (start instances on all cores - 1)
+# !!! Do not set this value more than physical cores count in your machine !!!
+# Review documentation: https://docs.rw/docs/install/environment-variables#scaling-api
+API_INSTANCES=1
+
+### DATABASE ###
+# FORMAT: postgresql://{user}:{password}@{host}:{port}/{database}
+DATABASE_URL="postgresql://postgres:postgres@remnawave-db:5432/postgres"
+
+### REDIS ###
+REDIS_SOCKET=/var/run/valkey/valkey.sock
+# Alternative to REDIS_SOCKET
+#REDIS_HOST=
+#REDIS_PORT=
+
+### JWT ###
+### CHANGE DEFAULT VALUES ###
+JWT_AUTH_SECRET=remna_8f93e2b1a4c6d7e8f0a2b4c6d8e0f2b4
+JWT_API_TOKENS_SECRET=remna_c6d8e0f2b48f93e2b1a4c6d7e8f0a2b4
+
+### TELEGRAM NOTIFICATIONS ###
+IS_TELEGRAM_NOTIFICATIONS_ENABLED=false
+TELEGRAM_BOT_TOKEN=change_me
+# is optional, only if you want to use proxy
+# FORMAT: protocol://user:password@host:port, example: socks5://proxy:1080
+# TELEGRAM_BOT_PROXY=change_me
+
+### TELEGRAM CHAT IDs in format: "chat_id:thread_id"
+# thread_id is optional, only if you want to use topics
+# example: "-100123:80" - -100123 is chat_id, 80 is thread_id
+# example: "-100123" - -100123 is chat_id, thread_id is not used
+TELEGRAM_NOTIFY_USERS=change_me
+TELEGRAM_NOTIFY_NODES=change_me
+TELEGRAM_NOTIFY_CRM=change_me
+TELEGRAM_NOTIFY_SERVICE=change_me
+TELEGRAM_NOTIFY_TBLOCKER=change_me
+
+
+### PANEL DOMAIN ###
+PANEL_DOMAIN=panelhide.su
+
+### FRONT_END ###
+# Used by CORS, you can leave it as * or place your domain there
+FRONT_END_DOMAIN=*
+
+### SUBSCRIPTION PUBLIC DOMAIN ###
+### DOMAIN, WITHOUT HTTP/HTTPS, DO NOT ADD / AT THE END ###
+### Used in "profile-web-page-url" response header and in UI/API ###
+### Review documentation: https://docs.rw/docs/install/environment-variables#domains
+SUB_PUBLIC_DOMAIN=sub.panelhide.su/api/sub
+
+### If CUSTOM_SUB_PREFIX is set in @remnawave/subscription-page, append the same path to SUB_PUBLIC_DOMAIN. Example: SUB_PUBLIC_DOMAIN=sub-page.example.com/sub
+
+### SWAGGER ###
+SWAGGER_PATH=/docs
+SCALAR_PATH=/scalar
+IS_DOCS_ENABLED=false
+
+### PROMETHEUS ###
+### Metrics are available at http://127.0.0.1:METRICS_PORT/metrics
+METRICS_USER=admin
+METRICS_PASS=admin
+
+# Webhook configuration
+# Enable webhook notifications (true/false, defaults to false if not set or empty)
+WEBHOOK_ENABLED=false
+# Webhook URL to send notifications to (can specify multiple URLs separated by commas if needed)
+# Only http:// or https:// are allowed.
+WEBHOOK_URL=https://your-webhook-url.com/endpoint
+### This secret is used to sign the webhook payload, must be exact 64 characters. Only a-z, 0-9, A-Z are allowed.
+WEBHOOK_SECRET_HEADER=vsmu67Kmg6R8FjIOF1WUY8LWBHie4scdEqrfsKmyf4IAf8dY3nFS0wwYHkhh6ZvQ
+
+### Bandwidth usage reached notifications
+BANDWIDTH_USAGE_NOTIFICATIONS_ENABLED=false
+# Only in ASC order (example: [60, 80]), must be valid array of integer(min: 25, max: 95) numbers. No more than 5 values.
+BANDWIDTH_USAGE_NOTIFICATIONS_THRESHOLD=[60, 80]
+
+### Not connected users notification (webhook, telegram)
+NOT_CONNECTED_USERS_NOTIFICATIONS_ENABLED=false
+# Only in ASC order (example: [6, 12, 24]), must be valid array of integer(min: 1, max: 168) numbers. No more than 3 values.
+# Each value represents HOURS passed after user creation (user.createdAt)
+NOT_CONNECTED_USERS_NOTIFICATIONS_AFTER_HOURS=[6, 24, 48]
+
+### CLOUDFLARE ###
+# USED ONLY FOR docker-compose-prod-with-cf.yml
+# NOT USED BY THE APP ITSELF
+CLOUDFLARE_TOKEN=ey...
+
+### Database ###
+### For Postgres Docker container ###
+# NOT USED BY THE APP ITSELF
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=postgres
+server {
+    server_name sub.panelhide.su;
+
+    location / {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+
+    listen [::]:443 ssl; # managed by Certbot
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/sub.panelhide.su/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/sub.panelhide.su/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+server {
+    if ($host = sub.panelhide.su) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    listen [::]:80;
+    server_name sub.panelhide.su;
+    return 404; # managed by Certbot
+}
+server {
+    listen 80;
+    listen [::]:80;
+    server_name sub.panelhide.su;
+
+    location / {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

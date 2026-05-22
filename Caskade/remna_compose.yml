@@ -1,0 +1,55 @@
+﻿services:
+  panel:
+    image: remnawave/backend:latest
+    container_name: remnawave-panel
+    restart: always
+    ports:
+      - "127.0.0.1:3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - valkey
+    volumes:
+      - valkey_sock:/var/run/valkey
+      - ./data:/app/data
+
+  db:
+    image: postgres:15-alpine
+    container_name: remnawave-db
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  valkey:
+    image: valkey/valkey:latest
+    container_name: remnawave-valkey
+    restart: always
+    command: valkey-server --unixsocket /var/run/valkey/valkey.sock --unixsocketperm 777
+    volumes:
+      - valkey_data:/data
+      - valkey_sock:/var/run/valkey
+
+  sub:
+    image: remnawave/subscription-page:latest
+    container_name: remnawave-sub
+    restart: always
+    ports:
+      - "127.0.0.1:3001:3010"
+    environment:
+      - APP_PORT=3010
+      - REMNAWAVE_PANEL_URL=http://remnawave-panel:3000
+      - REMNAWAVE_API_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1dWlkIjoiOWZiM2MxMjYtODY3YS00ZGQ1LTlmNGEtMmUxYzk2YjQyYTQ2IiwidXNlcm5hbWUiOm51bGwsInJvbGUiOiJBUEkiLCJpYXQiOjE3NzgxNzQxNjUsImV4cCI6MTA0MTgwODc3NjV9.ttdZFSGIBPiEBDdDqH33ccB22LOqfb9h4W8dpBkZz6M
+      - HOST=0.0.0.0
+      - NODE_ENV=production
+      - REVERSE_PROXY=true
+      - TRUST_PROXY=true
+
+volumes:
+  db_data:
+  valkey_data:
+  valkey_sock:

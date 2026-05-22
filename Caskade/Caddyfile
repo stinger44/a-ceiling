@@ -1,0 +1,31 @@
+# Caddyfile for Remnawave Infrastructure
+{
+    email ckc@panelhide.su
+}
+
+# Основная панель
+panelhide.su, www.panelhide.su {
+    reverse_proxy 127.0.0.1:3000
+}
+
+# Админка (Case211)
+admin.panelhide.su {
+    # API Backend (теперь на 8081 по docker ps)
+    handle /api/* {
+        reverse_proxy 127.0.0.1:8081
+    }
+    # Frontend (теперь на 3010 по docker ps)
+    handle {
+        reverse_proxy 127.0.0.1:3010
+    }
+}
+
+# Страница подписки
+sub.panelhide.su {
+    reverse_proxy 127.0.0.1:3001
+}
+
+# Bedolaga Bot (Магазин/MiniApp)
+bot.panelhide.su {
+    reverse_proxy 127.0.0.1:8080
+}

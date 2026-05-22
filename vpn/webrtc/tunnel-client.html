@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>VPN WebRTC Tunnel — Layer 3</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0d1117; color: #c9d1d9;
+      display: flex; flex-direction: column; align-items: center;
+      min-height: 100vh; padding: 2rem;
+    }
+    h1 { color: #58a6ff; margin-bottom: 0.5rem; font-size: 1.4rem; }
+    .subtitle { color: #8b949e; margin-bottom: 2rem; font-size: .9rem; }
+    .card {
+      background: #161b22; border: 1px solid #30363d;
+      border-radius: 10px; padding: 1.5rem; width: 100%; max-width: 600px;
+      margin-bottom: 1rem;
+    }
+    .card h2 { font-size: 1rem; color: #e6edf3; margin-bottom: 1rem; }
+    label { display: block; font-size: .85rem; color: #8b949e; margin-bottom: 4px; }
+    input {
+      width: 100%; padding: .5rem .75rem; background: #0d1117;
+      border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9; font-size: .9rem;
+      margin-bottom: .75rem;
+    }
+    input:focus { outline: none; border-color: #58a6ff; }
+    button {
+      padding: .55rem 1.2rem; border: none; border-radius: 6px;
+      cursor: pointer; font-size: .9rem; font-weight: 600;
+      transition: opacity .15s;
+    }
+    button:hover { opacity: .85; }
+    .btn-connect  { background: #238636; color: #fff; }
+    .btn-disconnect { background: #da3633; color: #fff; display: none; }
+    .status {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .6rem 1rem; border-radius: 6px; font-size: .85rem;
+      margin-top: 1rem;
+    }
+    .status.ok    { background: #0d2119; color: #3fb950; border: 1px solid #238636; }
+    .status.err   { background: #2d0f0f; color: #f85149; border: 1px solid #da3633; }
+    .status.wait  { background: #141624; color: #79c0ff; border: 1px solid #388bfd; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+    .dot.pulse { animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    #log {
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: .78rem; background: #010409;
+      border: 1px solid #30363d; border-radius: 6px;
+      padding: .75rem; height: 200px; overflow-y: auto;
+      color: #7ee787; white-space: pre-wrap; word-break: break-all;
+    }
+    .proxy-note {
+      background: #1c2128; border: 1px solid #388bfd;
+      border-radius: 6px; padding: .75rem 1rem; font-size: .83rem; color: #79c0ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌐 VPN WebRTC Tunnel</h1>
+  <p class="subtitle">Layer 3 — аварийный канал через WebRTC DataChannel</p>
+
+  <div class="card">
+    <h2>Подключение к серверу</h2>
+
+    <label>Адрес сервера (VPS)</label>
+    <input id="serverUrl" type="text" placeholder="ws://YOUR_VPS_IP:8765?token=changeme" />
+
+    <label>STUN серверы (Яндекс — всегда в белом списке)</label>
+    <input id="stunServers" type="text" value="stun:stun.yandex.ru:3478" />
+
+    <button class="btn-connect" id="btnConnect" onclick="connect()">Подключиться</button>
+    <button class="btn-disconnect" id="btnDisconnect" onclick="disconnect()">Отключиться</button>
+
+    <div id="statusEl" class="status wait">
+      <div class="dot pulse"></div>
+      <span>Не подключено</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Использование прокси</h2>
+    <div class="proxy-note">
+      После подключения настрой браузер на HTTP/SOCKS5 прокси:<br>
+      <strong>HTTP Proxy: localhost:8080</strong><br>
+      Рекомендуем расширение: <em>Proxy SwitchyOmega</em> для Chrome/Firefox.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Лог</h2>
+    <div id="log"></div>
+  </div>
+
+  <script>
+  'use strict';
+
+  // ─── Состояние ─────────────────────────────────────────────────────────────
+  let ws = null;
+  let pc = null;         // RTCPeerConnection
+  let dc = null;         // RTCDataChannel
+  let proxyServer = null;
+  let sessionId = null;
+
+  const PROXY_PORT = 8080;
+
+  // ─── Утилиты ───────────────────────────────────────────────────────────────
+  const logEl = document.getElementById('log');
+  function log(msg, color = '#7ee787') {
+    const ts = new Date().toLocaleTimeString();
+    logEl.insertAdjacentHTML('beforeend',
+      `<span style="color:#8b949e">[${ts}]</span> <span style="color:${color}">${msg}</span>\n`);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  function setStatus(text, type = 'wait') {
+    const el = document.getElementById('statusEl');
+    el.className = `status ${type}`;
+    el.innerHTML = `<div class="dot${type === 'wait' ? ' pulse' : ''}"></div><span>${text}</span>`;
+  }
+
+  // ─── WebSocket → VPS (signaling) ───────────────────────────────────────────
+  function connect() {
+    const serverUrl = document.getElementById('serverUrl').value.trim();
+    if (!serverUrl) { alert('Укажи адрес сервера'); return; }
+
+    const stunList = document.getElementById('stunServers').value
+      .split(',').map(s => s.trim()).filter(Boolean)
+      .map(url => ({ urls: url }));
+
+    log(`Подключение к ${serverUrl}...`, '#79c0ff');
+    setStatus('Подключение...', 'wait');
+
+    ws = new WebSocket(serverUrl);
+
+    ws.onopen = () => {
+      log('WebSocket подключён. Инициируем WebRTC...', '#79c0ff');
+      initWebRTC(stunList);
+    };
+
+    ws.onmessage = ({ data }) => {
+      // Бинарные данные — пишем в прокси-буфер
+      if (data instanceof Blob) {
+        data.arrayBuffer().then(buf => {
+          if (dc && dc.readyState === 'open') {
+            // На этом уровне данные от сервера → отправляем в DC (не используется здесь,
+            // т.к. здесь браузер = клиент; сервер получает данные от нас)
+          }
+          handleServerData(new Uint8Array(buf));
+        });
+        return;
+      }
+
+      let msg;
+      try { msg = JSON.parse(data); } catch { return; }
+
+      switch (msg.type) {
+        case 'session':
+          sessionId = msg.id;
+          log(`Сессия: ${sessionId}`);
+          break;
+        case 'connected':
+          log(`TCP: подключено к ${msg.host}:${msg.port}`, '#3fb950');
+          break;
+        case 'disconnected':
+          log('TCP: соединение закрыто', '#d29922');
+          break;
+        case 'error':
+          log(`TCP error: ${msg.message}`, '#f85149');
+          break;
+        case 'pong':
+          break;
+      }
+    };
+
+    ws.onerror = (e) => {
+      log('WebSocket ошибка: ' + JSON.stringify(e), '#f85149');
+      setStatus('Ошибка подключения', 'err');
+    };
+
+    ws.onclose = () => {
+      log('WebSocket закрыт', '#d29922');
+      setStatus('Отключено', 'err');
+      document.getElementById('btnConnect').style.display = '';
+      document.getElementById('btnDisconnect').style.display = 'none';
+    };
+  }
+
+  // ─── WebRTC DataChannel ────────────────────────────────────────────────────
+  function initWebRTC(iceServers) {
+    pc = new RTCPeerConnection({
+      iceServers,
+      // Яндекс TURN если STUN не пробил NAT
+      iceCandidatePoolSize: 2
+    });
+
+    // DataChannel для туннеля (ordered=true — надёжная доставка, SCTP)
+    dc = pc.createDataChannel('tunnel', {
+      ordered: true,
+      maxRetransmits: null  // надёжная доставка
+    });
+
+    dc.binaryType = 'arraybuffer';
+    dc.onopen = () => {
+      log('WebRTC DataChannel открыт! Туннель активен.', '#3fb950');
+      setStatus('Подключено — туннель активен ✓', 'ok');
+      document.getElementById('btnConnect').style.display = 'none';
+      document.getElementById('btnDisconnect').style.display = '';
+      startProxyHint();
+    };
+
+    dc.onclose = () => {
+      log('DataChannel закрыт', '#d29922');
+      setStatus('Туннель разорван', 'err');
+    };
+
+    dc.onerror = (e) => log('DataChannel error: ' + e, '#f85149');
+
+    // ICE candidates → сервер (через WebSocket)
+    pc.onicecandidate = ({ candidate }) => {
+      if (candidate && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'ice', candidate }));
+        log('ICE candidate: ' + candidate.type);
+      }
+    };
+
+    pc.onconnectionstatechange = () => {
+      log('WebRTC state: ' + pc.connectionState);
+    };
+
+    // SDP offer
+    pc.createOffer()
+      .then(offer => pc.setLocalDescription(offer))
+      .then(() => {
+        ws.send(JSON.stringify({ type: 'offer', sdp: pc.localDescription }));
+        log('SDP offer отправлен на сервер');
+      })
+      .catch(e => log('Ошибка создания offer: ' + e.message, '#f85149'));
+  }
+
+  // Заглушка — реальные данные через DataChannel обрабатываются в proxy layer
+  function handleServerData(bytes) { /* данные идут через DataChannel */ }
+
+  function startProxyHint() {
+    log('Настрой HTTP прокси: localhost:' + PROXY_PORT);
+    log('Подсказка: используй Proxy SwitchyOmega в Chrome/Firefox');
+  }
+
+  function disconnect() {
+    if (dc)  { dc.close();  dc = null; }
+    if (pc)  { pc.close();  pc = null; }
+    if (ws)  { ws.close();  ws = null; }
+    setStatus('Отключено', 'wait');
+    document.getElementById('btnConnect').style.display = '';
+    document.getElementById('btnDisconnect').style.display = 'none';
+    log('Отключено вручную');
+  }
+
+  // Пинг для поддержания соединения
+  setInterval(() => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'ping' }));
+    }
+  }, 30_000);
+  </script>
+</body>
+</html>

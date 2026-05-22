@@ -1,0 +1,17 @@
+[Unit]
+Description=Alpha Ceiling Telegram Review Bot
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/alphaceiling/bot
+ExecStart=/var/www/alphaceiling/bot/venv/bin/python main.py
+Restart=always
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=alphaceiling-bot
+
+[Install]
+WantedBy=multi-user.target

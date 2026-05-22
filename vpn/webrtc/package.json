@@ -1,0 +1,17 @@
+{
+  "name": "vpn-webrtc-tunnel",
+  "version": "1.0.0",
+  "description": "WebRTC DataChannel tunnel — Layer 3 emergency bypass",
+  "main": "tunnel-server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node tunnel-server.js",
+    "dev": "node --watch tunnel-server.js"
+  },
+  "dependencies": {
+    "ws": "^8.17.1",
+    "uuid": "^10.0.0"
+  }
+}

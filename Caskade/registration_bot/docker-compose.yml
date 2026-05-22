@@ -1,0 +1,15 @@
+services:
+  registration-bot:
+    build: .
+    container_name: registration-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./bot.db:/app/bot.db
+    networks:
+      - remnawave-network
+
+networks:
+  remnawave-network:
+    external: true

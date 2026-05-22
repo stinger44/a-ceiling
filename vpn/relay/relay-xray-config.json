@@ -1,0 +1,94 @@
+{
+  "_comment": "Эталонный конфиг Xray для relay VM в Yandex Cloud. cloud-init генерирует его автоматически с реальными ключами.",
+
+  "log": {
+    "loglevel": "warning"
+  },
+
+  "inbounds": [
+    {
+      "tag": "relay-in",
+      "_comment": "Принимаем от мобильных устройств. Маскируемся под мобильных операторов (mts.ru, megafon.ru).",
+      "port": 443,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "${RELAY_VLESS_UUID}",
+            "flow": "xtls-rprx-vision",
+            "comment": "relay-client"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "dest": "${RELAY_SNI}:443",
+          "xver": 0,
+          "serverNames": ["${RELAY_SNI}"],
+          "privateKey": "${RELAY_REALITY_PRIVATE_KEY}",
+          "shortIds": ["${RELAY_REALITY_SHORT_ID}"]
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls", "quic"]
+      }
+    }
+  ],
+
+  "outbounds": [
+    {
+      "tag": "to-vps-finland",
+      "_comment": "Пересылаем на VPS в Финляндии через VLESS Reality. Для РКН выглядит как исходящий HTTPS к Microsoft.",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "${VPS_IP}",
+            "port": 443,
+            "users": [
+              {
+                "id": "${VLESS_UUID}",
+                "flow": "xtls-rprx-vision",
+                "encryption": "none"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "fingerprint": "chrome",
+          "serverName": "www.microsoft.com",
+          "publicKey": "${REALITY_PUBLIC_KEY}",
+          "shortId": "${REALITY_SHORT_ID}"
+        }
+      }
+    },
+    {
+      "tag": "direct",
+      "protocol": "freedom"
+    },
+    {
+      "tag": "block",
+      "protocol": "blackhole"
+    }
+  ],
+
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "ip": ["geoip:private"],
+        "outboundTag": "block"
+      }
+    ]
+  }
+}

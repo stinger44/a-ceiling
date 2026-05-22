@@ -1,0 +1,153 @@
+{
+  "_comment": "Эталонный конфиг Xray для VPS. Используется как справочник — реальные настройки через 3X-UI панель.",
+  "_replace": {
+    "${VLESS_UUID}": "UUID из vpn-credentials.txt",
+    "${REALITY_PRIVATE_KEY}": "Private Key из vpn-credentials.txt",
+    "${REALITY_SHORT_ID}": "Short ID из vpn-credentials.txt"
+  },
+
+  "log": {
+    "loglevel": "warning",
+    "access": "/var/log/xray/access.log",
+    "error": "/var/log/xray/error.log"
+  },
+
+  "inbounds": [
+    {
+      "tag": "layer0-main",
+      "_comment": "Layer 0: основной. DPI видит HTTPS к Microsoft.",
+      "port": 443,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "${VLESS_UUID}",
+            "flow": "xtls-rprx-vision",
+            "comment": "main-client"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "dest": "www.microsoft.com:443",
+          "xver": 0,
+          "serverNames": ["www.microsoft.com", "learn.microsoft.com"],
+          "privateKey": "${REALITY_PRIVATE_KEY}",
+          "shortIds": ["${REALITY_SHORT_ID}"]
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls", "quic"],
+        "routeOnly": false
+      }
+    },
+
+    {
+      "tag": "layer0-backup",
+      "_comment": "Layer 0 резерв: другой SNI на случай если Microsoft заблокируют.",
+      "port": 8443,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "${VLESS_UUID}",
+            "flow": "xtls-rprx-vision"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "dest": "dl.google.com:443",
+          "xver": 0,
+          "serverNames": ["dl.google.com"],
+          "privateKey": "${REALITY_PRIVATE_KEY}",
+          "shortIds": ["${REALITY_SHORT_ID}"]
+        }
+      }
+    },
+
+    {
+      "tag": "layer1-cloudflare-ws",
+      "_comment": "Layer 1: WebSocket для Cloudflare CDN. TLS терминируется на CF.",
+      "port": 2053,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "${VLESS_UUID}",
+            "comment": "cf-client"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "none",
+        "wsSettings": {
+          "path": "/vpn-ws",
+          "headers": {
+            "Host": "vpn.${DOMAIN}"
+          }
+        }
+      }
+    },
+
+    {
+      "tag": "layer2-relay-in",
+      "_comment": "Layer 2: получает трафик от relay в Yandex Cloud.",
+      "port": 10443,
+      "listen": "127.0.0.1",
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "${VLESS_UUID}"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "none"
+      }
+    }
+  ],
+
+  "outbounds": [
+    {
+      "tag": "direct",
+      "protocol": "freedom",
+      "settings": {}
+    },
+    {
+      "tag": "block",
+      "protocol": "blackhole",
+      "settings": {}
+    }
+  ],
+
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "ip": ["geoip:private"],
+        "outboundTag": "block"
+      },
+      {
+        "type": "field",
+        "protocol": ["bittorrent"],
+        "outboundTag": "block"
+      }
+    ]
+  }
+}

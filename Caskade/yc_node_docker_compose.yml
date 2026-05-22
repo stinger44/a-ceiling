@@ -1,0 +1,16 @@
+services:
+  remnanode:
+    image: remnawave/node:latest
+    container_name: remnawave-node
+    restart: always
+    network_mode: host
+    env_file:
+      - .env
+    volumes:
+      - ./geoip.dat:/usr/local/bin/geoip.dat:ro
+      - ./geosite.dat:/usr/local/bin/geosite.dat:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -1,0 +1,7 @@
+# Никогда не коммить!
+.env
+generated-keys.txt
+vpn-credentials.txt
+*.log
+node_modules/
+cache.db

@@ -1,0 +1,16 @@
+# Секреты
+.env
+*.env
+!.env.example
+
+# Архив отладки
+archive/
+
+# Бинарники
+*.zip
+*.pid
+*.dat
+
+# OS
+Thumbs.db
+.DS_Store

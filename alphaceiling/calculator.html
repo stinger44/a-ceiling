@@ -1,219 +1,347 @@
 <!DOCTYPE html>
-
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Онлайн-калькулятор площади и стоимости натяжного потолка в Сочи | Alpha Ceiling</title>
-    <meta name="description" content="Интерактивный калькулятор для построения чертежа комнаты и точного расчета цены натяжного потолка в Сочи. Узнайте стоимость онлайн за 2 минуты!">
+    <title>Онлайн-калькулятор натяжных потолков и тканевых стен в Сочи | Alpha Ceiling</title>
+    <meta name="description" content="Рассчитайте точную стоимость тканевых акустических стен или натяжных потолков в Сочи онлайн. Удобный калькулятор с детальной сметой и выбором материалов.">
     
     <!-- Open Graph / Social Sharing -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://alphaceiling.ru/calculator.html">
-    <meta property="og:title" content="Онлайн-калькулятор натяжного потолка в Сочи | Alpha Ceiling">
-    <meta property="og:description" content="Постройте чертеж комнаты на холсте и мгновенно рассчитайте цену натяжного потолка в Сочи. Онлайн-расчет.">
-    <meta property="og:image" content="images/logo.jpg">
+    <meta property="og:title" content="Онлайн-калькулятор стоимости потолков и стен в Сочи | Alpha Ceiling">
+    <meta property="og:description" content="Удобный калькулятор со слайдерами для быстрого расчета стоимости тканевых стен и натяжных потолков в Сочи. Узнайте цену за 1 минуту!">
+    <meta property="og:image" content="images/logo.png">
     <meta property="og:site_name" content="Alpha Ceiling">
     
     <link rel="icon" type="image/png" href="images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=12">
-    <link rel="stylesheet" href="css/calculator.css?v=3">
+    <link rel="stylesheet" href="css/style.css?v=16">
+    <link rel="stylesheet" href="css/calculator.css?v=8">
 </head>
-
 <body>
 
-  <header class="header">
-
+    <header class="header">
         <div class="container header-container">
-
-                <a href="index.html" class="logo logo-link" style="display: flex; align-items: center; gap: 10px;"><img src="images/logo.png" alt="Alpha Ceiling Logo" style="height: 36px; width: auto; object-fit: contain;"><span><span style="color:var(--color-accent);font-weight:800;">Alpha</span> Ceiling</span></a>
-
+            <a href="fabricwalls.html" class="logo-link">
+                <img src="images/logo.png" alt="Alpha Ceiling Logo" class="logo-img">
+                <span class="logo-text"><span class="logo-accent">Alpha</span> Ceiling</span>
+            </a>
             <nav class="nav">
-
                 <ul class="nav-list">
-
-                    <li><a href="index.html">Тканевые стены</a></li>
-
+                    <li><a href="fabricwalls.html">Тканевые стены</a></li>
                     <li><a href="ceilings.html">Натяжные потолки</a></li>
-
-                    <li><a href="index.html#advantages">Преимущества</a></li>
-
+                    <li><a href="fabricwalls.html#advantages">Преимущества</a></li>
                     <li><a href="gallery.html">Галерея</a></li>
-
-                    <li><a href="index.html#reviews">Отзывы</a></li>
-
+                    <li><a href="fabricwalls.html#reviews">Отзывы</a></li>
                     <li><a href="calculator.html" class="highlight">Калькулятор</a></li>
-
                 </ul>
-
             </nav>
-
             <div class="header-contact">
-
-                <a href="tel:+79996520212" class="phone">+7 (999) 652-02-12</a>
-
-                <a href="tel:+79996520212" class="btn btn-outline">Позвонить</a>
-
+                <a href="tel:+79996520212" class="btn-header-call">Позвонить</a>
             </div>
-
             <button class="mobile-menu-btn" id="mobileMenuBtn">
-
                 <span></span><span></span><span></span>
-
             </button>
-
         </div>
-
     </header>
-<div class="mobile-nav" id="mobileNav">
 
+    <div class="mobile-nav" id="mobileNav">
         <div class="mobile-nav-content">
-
             <ul class="mobile-nav-list">
-
-                <li><a href="index.html">Тканевые стены</a></li>
-
+                <li><a href="fabricwalls.html">Тканевые стены</a></li>
                 <li><a href="ceilings.html">Натяжные потолки</a></li>
-
-                <li><a href="index.html#advantages">Преимущества</a></li>
-
+                <li><a href="fabricwalls.html#advantages">Преимущества</a></li>
                 <li><a href="gallery.html">Галерея</a></li>
-
-                <li><a href="index.html#reviews">Отзывы</a></li>
-
+                <li><a href="fabricwalls.html#reviews">Отзывы</a></li>
                 <li><a href="calculator.html" class="highlight">Калькулятор</a></li>
-
             </ul>
-
             <a href="tel:+79996520212" class="mobile-phone">+7 (999) 652-02-12</a>
-
             <a href="tel:+79996520212" class="btn btn-primary">Позвонить</a>
-
         </div>
-
-
-
-  <div class="calc-page-title">
-
-    <h1>Калькулятор площади</h1>
-
-    <p>Сочи — получите точную стоимость онлайн</p>
-
-  </div>
-
-
-
-  <main class="calc-layout">
-
-    <aside class="panel">
-
-      <div class="panel-title">Параметры</div>
-
-      <div class="input-group">
-
-        <label for="segLength">Длина (см)</label>
-
-        <input id="segLength" type="number" min="1" placeholder="например: 350">
-
-      </div>
-
-      <div class="input-group">
-
-        <label>Направление</label>
-
-        <div class="dir-grid">
-
-          <div></div><button class="dir-btn" onclick="setDirection('up')">↑</button><div></div>
-
-          <button class="dir-btn" onclick="setDirection('left')">←</button>
-
-          <div style="display:flex;align-items:center;justify-content:center;"><span id="dirIndicator">•</span></div>
-
-          <button class="dir-btn" onclick="setDirection('right')">→</button>
-
-          <div></div><button class="dir-btn" onclick="setDirection('down')">↓</button><div></div>
-
-        </div>
-
-      </div>
-
-      <button class="btn btn-primary" onclick="addSegment()">+ Добавить</button>
-
-      <div class="btn-row">
-
-        <button class="btn btn-ghost" onclick="undoSegment()">↩ Отмена</button>
-
-        <button class="btn btn-ghost" onclick="manualClose()">⬡ Замкнуть</button>
-
-      </div>
-
-      <button class="btn btn-danger btn-ghost" onclick="resetAll()">✕ Сбросить</button>
-
-    </aside>
-
-
-
-    <section class="canvas-wrap">
-
-      <div class="closed-badge" id="closedBadge">✓ Замкнуто</div>
-
-      <canvas id="roomCanvas"></canvas>
-
-      <div class="canvas-toolbar">
-
-        <span>Площадь: <span id="displayArea" style="color:#22d3a5;font-weight:700">0.00 м²</span></span>
-
-        <span style="margin-left:1rem">Периметр: <span id="displayPerim" style="color:#a78bfa;font-weight:700">0.00 м</span></span>
-
-      </div>
-
-    </section>
-
-
-
-    <aside class="panel">
-
-      <div class="panel-title">Итого</div>
-
-      <div class="result-area">
-
-        <div class="result-row"><span>Площадь</span><span id="resultArea">0.00 м²</span></div>
-
-        <div class="result-row"><span>Периметр</span><span id="resultPerim">0.00 м</span></div>
-
-      </div>
-
-      <div class="total-block">
-
-        <div class="total-label">Предварительно</div>
-
-        <div class="total-sum" id="totalSum">0 ₽</div>
-
-      </div>
-
-      <a href="tel:+79996520212" class="btn btn-success" style="text-decoration:none; display:block;">📞 Позвонить для замера</a>
-
-    </aside>
-
-  </main>
-
-
-
-    <!-- Cookie Banner -->
-
-    <div id="cookie-banner" style="position:fixed; bottom:20px; left:20px; right:20px; background:rgba(0,0,0,0.95); border:1px solid #262626; padding:20px; border-radius:12px; display:none; z-index:9999; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:15px; backdrop-filter:blur(10px);">
-
-        <p style="margin:0; font-size:14px; color:#9ca3af; max-width:800px;">Мы используем файлы cookie для улучшения работы сайта. Продолжая использовать сайт, вы соглашаетесь с обработкой данных.</p>
-
-        <button id="accept-cookies" class="btn btn-primary" style="padding:10px 20px;">Принять</button>
-
     </div>
 
+    <div class="calc-page-title">
+        <h1>Калькулятор стоимости</h1>
+        <p>Сочи — получите точную смету на натяжные потолки и тканевые стены онлайн</p>
+    </div>
 
+    <main class="calc-layout">
+        <!-- Left configuration panel -->
+        <div class="calc-main-content">
+            <!-- Tabs Navigation -->
+            <div class="calc-tabs">
+                <button type="button" id="btnTabWalls" class="tab-btn active" onclick="switchTab('walls')">
+                    <span class="tab-icon">🔊</span>
+                    <span class="tab-label">Акустические стены</span>
+                </button>
+                <button type="button" id="btnTabCeilings" class="tab-btn" onclick="switchTab('ceilings')">
+                    <span class="tab-icon">☁️</span>
+                    <span class="tab-label">Натяжные потолки</span>
+                </button>
+            </div>
+
+            <!-- Tab Content: Walls -->
+            <div id="tabContentWalls" class="tab-content active">
+                <div class="panel">
+                    <div class="panel-title">Параметры стен</div>
+                    
+                    <!-- Wall Length Slider -->
+                    <div class="input-group">
+                        <div class="slider-header">
+                            <label for="wallLength">Общая длина стен под отделку</label>
+                            <span class="slider-val" id="valWallLength">15 м</span>
+                        </div>
+                        <input type="range" id="wallLength" min="2" max="100" value="15" step="1" oninput="updateCalculation()">
+                        <div class="slider-range-labels">
+                            <span>2 м</span>
+                            <span>100 м</span>
+                        </div>
+                    </div>
+
+                    <!-- Wall Height Slider -->
+                    <div class="input-group">
+                        <div class="slider-header">
+                            <label for="wallHeight">Высота стен (потолка)</label>
+                            <span class="slider-val" id="valWallHeight">2.8 м</span>
+                        </div>
+                        <input type="range" id="wallHeight" min="2.0" max="5.0" value="2.8" step="0.1" oninput="updateCalculation()">
+                        <div class="slider-range-labels">
+                            <span>2.0 м</span>
+                            <span>5.0 м</span>
+                        </div>
+                    </div>
+
+                    <!-- Counters Grid for Walls -->
+                    <div class="counters-grid">
+                        <div class="counter-item">
+                            <label>Количество помещений</label>
+                            <div class="counter-control">
+                                <button type="button" onclick="adjustCounter('wallsRooms', -1)">−</button>
+                                <span id="wallsRooms">1</span>
+                                <button type="button" onclick="adjustCounter('wallsRooms', 1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="counter-item">
+                            <label>Количество углов (стены)</label>
+                            <div class="counter-control">
+                                <button type="button" onclick="adjustCounter('wallsCorners', -1)">−</button>
+                                <span id="wallsCorners">4</span>
+                                <button type="button" onclick="adjustCounter('wallsCorners', 1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="counter-item">
+                            <label>Двери (вычет площади)</label>
+                            <div class="counter-control">
+                                <button type="button" onclick="adjustCounter('wallsDoors', -1)">−</button>
+                                <span id="wallsDoors">1</span>
+                                <button type="button" onclick="adjustCounter('wallsDoors', 1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="counter-item">
+                            <label>Окна (вычет площади)</label>
+                            <div class="counter-control">
+                                <button type="button" onclick="adjustCounter('wallsWindows', -1)">−</button>
+                                <span id="wallsWindows">2</span>
+                                <button type="button" onclick="adjustCounter('wallsWindows', 1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="counter-item">
+                            <label>Розеток / выключателей</label>
+                            <div class="counter-control">
+                                <button type="button" onclick="adjustCounter('wallsSockets', -1)">−</button>
+                                <span id="wallsSockets">6</span>
+                                <button type="button" onclick="adjustCounter('wallsSockets', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Material Dropdown -->
+                    <div class="input-group">
+                        <label>Акустическая ткань</label>
+                        <div class="custom-select-wrapper" id="wallMaterialWrapper">
+                            <div class="custom-select-trigger" id="wallMaterialTrigger">
+                                <div class="custom-select-trigger-content" style="display: flex; align-items: center; gap: 10px;">
+                                    <img class="custom-select-trigger-icon" id="wallMaterialTriggerIcon" src="" alt="" style="display:none; width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border);">
+                                    <span class="custom-select-trigger-text" id="wallMaterialTriggerText">Выберите ткань...</span>
+                                </div>
+                                <span class="custom-select-arrow">▼</span>
+                            </div>
+                            <div class="custom-options" id="wallMaterialOptions">
+                                <!-- Dynamically populated -->
+                            </div>
+                            <!-- Floating texture preview -->
+                            <div class="texture-preview-popup" id="texturePreviewPopup">
+                                <img id="texturePreviewImage" src="" alt="Texture Preview">
+                                <div id="texturePreviewName" class="texture-preview-name"></div>
+                            </div>
+                        </div>
+                        <select id="wallMaterial" onchange="updateCalculation()" style="display: none;"></select>
+                    </div>
+
+                    <!-- Profile Dropdown -->
+                    <div class="input-group" style="display: none;">
+                        <label for="wallProfile">Монтажный багет (профиль)</label>
+                        <select id="wallProfile" onchange="updateCalculation()"></select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Ceilings -->
+            <div id="tabContentCeilings" class="tab-content">
+                <div class="panel">
+                    <div class="panel-title">Параметры потолка</div>
+
+                    <!-- Ceiling Area Slider -->
+                    <div class="input-group">
+                        <div class="slider-header">
+                            <label for="ceilArea">Площадь потолка</label>
+                            <span class="slider-val" id="valCeilArea">20 м²</span>
+                        </div>
+                        <input type="range" id="ceilArea" min="5" max="150" value="20" step="1" oninput="onCeilAreaInput()">
+                        <div class="slider-range-labels">
+                            <span>5 м²</span>
+                            <span>150 м²</span>
+                        </div>
+                    </div>
+
+                    <!-- Ceiling Perimeter Slider -->
+                    <div class="input-group">
+                        <div class="slider-header">
+                            <label for="ceilPerimeter">Периметр помещения (длина профиля)</label>
+                            <span class="slider-val" id="valCeilPerimeter">18 м</span>
+                        </div>
+                        <input type="range" id="ceilPerimeter" min="6" max="120" value="18" step="1" oninput="onCeilPerimeterInput()">
+                        <div class="slider-range-labels">
+                            <span>6 м</span>
+                            <span>120 м</span>
+                        </div>
+                        <div class="auto-checkbox-wrap">
+                            <input type="checkbox" id="ceilAutoPerimeter" checked onchange="onAutoPerimeterToggle()">
+                            <label for="ceilAutoPerimeter">Рассчитывать периметр автоматически</label>
+                        </div>
+                    </div>
+
+                    <!-- Counters Grid for Ceilings -->
+                    <div class="counters-grid">
+                        <div class="counter-item">
+                            <label>Количество помещений</label>
+                            <div class="counter-control">
+                                <button type="button" onclick="adjustCounter('ceilRooms', -1)">−</button>
+                                <span id="ceilRooms">1</span>
+                                <button type="button" onclick="adjustCounter('ceilRooms', 1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="counter-item">
+                            <label>Количество углов (всего)</label>
+                            <div class="counter-control">
+                                <button type="button" onclick="adjustCounter('ceilCorners', -1)">−</button>
+                                <span id="ceilCorners">4</span>
+                                <button type="button" onclick="adjustCounter('ceilCorners', 1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="counter-item">
+                            <label>Светильники / люстры</label>
+                            <div class="counter-control">
+                                <button type="button" onclick="adjustCounter('ceilLights', -1)">−</button>
+                                <span id="ceilLights">6</span>
+                                <button type="button" onclick="adjustCounter('ceilLights', 1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="counter-item">
+                            <label>Обход отопительных труб</label>
+                            <div class="counter-control">
+                                <button type="button" onclick="adjustCounter('ceilPipes', -1)">−</button>
+                                <span id="ceilPipes">0</span>
+                                <button type="button" onclick="adjustCounter('ceilPipes', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Material Dropdown -->
+                    <div class="input-group">
+                        <label for="ceilMaterial">Полотно потолка</label>
+                        <select id="ceilMaterial" onchange="updateCalculation()"></select>
+                    </div>
+
+                    <!-- Profile Dropdown -->
+                    <div class="input-group">
+                        <label for="ceilProfile">Тип профиля багета</label>
+                        <select id="ceilProfile" onchange="updateCalculation()"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side Panel: Live estimate summary & lead generation -->
+        <aside class="panel summary-panel">
+            <div class="panel-title">Сводная смета</div>
+            
+            <div class="summary-breakdown">
+                <div class="summary-row">
+                    <span class="summary-label">Площадь отделки:</span>
+                    <span class="summary-val" id="smetaArea">0.00 м²</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Периметр профиля:</span>
+                    <span class="summary-val" id="smetaPerimeter">0.00 м</span>
+                </div>
+                
+                <div class="divider"></div>
+
+                <div class="summary-row smeta-item">
+                    <span class="summary-sublabel">Полотно (материал):</span>
+                    <span class="summary-subval" id="smetaMaterialPrice">0 ₽</span>
+                </div>
+                <div class="summary-row smeta-item">
+                    <span class="summary-sublabel">Монтажные профили:</span>
+                    <span class="summary-subval" id="smetaProfilePrice">0 ₽</span>
+                </div>
+                <div class="summary-row smeta-item">
+                    <span class="summary-sublabel">Доп. работы и монтаж:</span>
+                    <span class="summary-subval" id="smetaWorkPrice">0 ₽</span>
+                </div>
+            </div>
+
+            <div class="total-block">
+                <div class="total-label">Ориентировочно под ключ</div>
+                <div class="total-sum" id="totalSum">0 ₽</div>
+                <div class="total-hint">* С учетом материалов, комплектующих и работ</div>
+            </div>
+
+            <!-- Contact Widget -->
+            <div class="contact-widget">
+                <div class="contact-widget-header">Обсудить расчет с менеджером</div>
+                <p class="contact-widget-desc">Мы не собираем ваши персональные данные на сайте. Пожалуйста, свяжитесь с нами напрямую, чтобы обсудить детальную смету или вызвать замерщика:</p>
+                
+                <div class="contact-buttons-layout">
+                    <a href="tel:+79996520212" class="btn btn-success contact-btn phone-btn">
+                        <span class="btn-icon">📞</span> Позвонить +7 (999) 652-02-12
+                    </a>
+                    <a href="https://t.me/+79996520212" target="_blank" class="btn btn-primary contact-btn telegram-widget-btn">
+                        <span class="btn-icon">💬</span> Написать в Telegram
+                    </a>
+                </div>
+            </div>
+
+
+        </aside>
+    </main>
+
+    <!-- Cookie Banner -->
+    <div id="cookie-banner" style="position:fixed; bottom:20px; left:20px; right:20px; background:rgba(0,0,0,0.95); border:1px solid #262626; padding:20px; border-radius:12px; display:none; z-index:9999; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:15px; backdrop-filter:blur(10px);">
+        <p style="margin:0; font-size:14px; color:#9ca3af; max-width:800px;">Мы используем файлы cookie для улучшения работы сайта. Продолжая использовать сайт, вы соглашаетесь с обработкой данных.</p>
+        <button id="accept-cookies" class="btn btn-primary" style="padding:10px 20px;">Принять</button>
+    </div>
 
     <!-- Telegram Button -->
     <a href="https://t.me/+79996520212" target="_blank" class="telegram-btn" aria-label="Написать в Telegram">
@@ -224,89 +352,54 @@
 
 
 
-  <footer class="footer">
-
+    <footer class="footer">
         <div class="container footer-container">
-
             <div class="footer-col">
-
-                <a href="index.html" class="logo footer-logo logo-link" style="display: flex; align-items: center; gap: 10px;"><img src="images/logo.png" alt="Alpha Ceiling Logo" style="height: 36px; width: auto; object-fit: contain;"><span><span style="color:var(--color-accent);font-weight:800;">Alpha</span> Ceiling</span></a>
-
+                <a href="fabricwalls.html" class="logo-link footer-logo">
+                    <img src="images/logo.png" alt="Alpha Ceiling Logo" class="logo-img">
+                    <span class="logo-text"><span class="logo-accent">Alpha</span> Ceiling</span>
+                </a>
                 <p>Акустические тканевые стены и натяжные потолки в Сочи.</p>
-
             </div>
-
             <div class="footer-col">
-
                 <h4>Навигация</h4>
-
                 <ul>
-
-                    <li><a href="index.html">Тканевые стены</a></li>
-
+                    <li><a href="fabricwalls.html">Тканевые стены</a></li>
                     <li><a href="ceilings.html">Натяжные потолки</a></li>
-
                     <li><a href="gallery.html">Галерея</a></li>
-
                     <li><a href="calculator.html">Калькулятор</a></li>
-
                 </ul>
-
             </div>
-
             <div class="footer-col">
-
                 <h4>Контакты</h4>
-
                 <p>г. Сочи</p>
-
                 <a href="tel:+79996520212" class="footer-phone">+7 (999) 652-02-12</a>
-
                 <p>sochi@alphaceiling.ru</p>
-
             </div>
-
         </div>
-
         <div class="footer-bottom">
-
-            <div class="container"><p>&copy; 2026 Alpha Ceiling. Все права защищены.</p></div>
-
+            <div class="container">
+                <p>&copy; 2026 Alpha Ceiling. Все права защищены.</p>
+            </div>
         </div>
-
     </footer>
 
     <script src="js/script.js?v=2"></script>
-    <script src="js/calculator.js?v=3"></script>
+    <script src="js/calculator.js?v=12"></script>
 
-  <script>
-
-      document.addEventListener('DOMContentLoaded', function() {
-
-          if (!localStorage.getItem('cookie_accepted')) {
-
-              const b = document.getElementById('cookie-banner');
-
-              if(b) {
-
-                  b.style.display = 'flex';
-
-                  document.getElementById('accept-cookies').onclick = function() {
-
-                      localStorage.setItem('cookie_accepted', 'true');
-
-                      b.style.display = 'none';
-
-                  };
-
-              }
-
-          }
-
-      });
-
-  </script>
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!localStorage.getItem('cookie_accepted')) {
+                const b = document.getElementById('cookie-banner');
+                if(b) {
+                    b.style.display = 'flex';
+                    document.getElementById('accept-cookies').onclick = function() {
+                        localStorage.setItem('cookie_accepted', 'true');
+                        b.style.display = 'none';
+                    };
+                }
+            }
+        });
+    </script>
 </body>
-
 </html>
