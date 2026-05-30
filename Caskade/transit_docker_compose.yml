@@ -1,9 +1,0 @@
-services:
-  xray-transit:
-    image: teddysun/xray:latest
-    container_name: xray-transit
-    restart: unless-stopped
-    network_mode: host
-    volumes:
-      - ./transit-config.json:/etc/xray/config.json:ro
-    command: ["xray", "run", "-config", "/etc/xray/config.json"]

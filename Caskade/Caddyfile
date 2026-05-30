@@ -27,5 +27,38 @@ sub.panelhide.su {
 
 # Bedolaga Bot (Магазин/MiniApp)
 bot.panelhide.su {
-    reverse_proxy 127.0.0.1:8080
+    encode gzip zstd
+    log
+
+
+    handle /api/* {
+        uri strip_prefix /api
+        reverse_proxy 127.0.0.1:8080
+    }
+
+    handle /cabinet/* {
+        reverse_proxy 127.0.0.1:8080
+    }
+    handle /cabinet {
+        reverse_proxy 127.0.0.1:8080
+    }
+    handle /uploads/* {
+        reverse_proxy 127.0.0.1:8080
+    }
+    handle /apay-meta-file.txt {
+        reverse_proxy 127.0.0.1:8080
+    }
+    handle /health {
+        reverse_proxy 127.0.0.1:8080
+    }
+    handle /health/* {
+        reverse_proxy 127.0.0.1:8080
+    }
+
+    handle {
+        root * /opt/remnawave-bot/cabinet-dist
+        try_files {path} /index.html
+        file_server
+    }
 }
+
