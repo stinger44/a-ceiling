@@ -11,7 +11,7 @@ from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from dotenv import load_dotenv
-from sqlmodel import Field, SQLModel, Session, create_engine, select
+from sqlmodel import Field, SQLModel, create_all, Session, create_engine, select
 
 # Load environment
 load_dotenv()
@@ -87,44 +87,6 @@ remna_api = RemnaAPI(API_URL, API_TOKEN)
 
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
-    tg_id = message.from_user.id
-    with Session(engine) as session:
-        statement = select(User).where(User.tg_id == tg_id)
-        user = session.exec(statement).first()
-        
-        if user:
-            sub = await remna_api.get_subscription(user.remna_uuid)
-            if sub:
-                sub_url = f"https://{SUB_DOMAIN}/{sub.get('shortUuid')}"
-                
-                # Add WebApp button to inline keyboard
-                builder = InlineKeyboardBuilder()
-                builder.row(types.InlineKeyboardButton(
-                    text="💼 Открыть личный кабинет",
-                    web_app=types.WebAppInfo(url=sub_url)
-                ))
-                
-                # Dynamically set the Menu Button for this user
-                try:
-                    await bot.set_chat_menu_button(
-                        chat_id=tg_id,
-                        menu_button=types.MenuButtonWebApp(
-                            text="Кабинет",
-                            web_app=types.WebAppInfo(url=sub_url)
-                        )
-                    )
-                except Exception as e:
-                    logging.error(f"Failed to set menu button: {e}")
-                
-                await message.answer(
-                    f"👋 С возвращением!\n\n"
-                    f"Твоя ссылка на подписку:\n`{sub_url}`\n\n"
-                    f"Ты можешь открыть Личный Кабинет прямо в Telegram по кнопке ниже:",
-                    parse_mode="Markdown",
-                    reply_markup=builder.as_markup()
-                )
-                return
-
     builder = InlineKeyboardBuilder()
     builder.row(types.InlineKeyboardButton(
         text="🚀 Регистрация / Получить подписку",
@@ -150,30 +112,11 @@ async def process_registration(callback: types.CallbackQuery):
             sub = await remna_api.get_subscription(user.remna_uuid)
             if sub:
                 sub_url = f"https://{SUB_DOMAIN}/{sub.get('shortUuid')}"
-                
-                builder = InlineKeyboardBuilder()
-                builder.row(types.InlineKeyboardButton(
-                    text="💼 Открыть личный кабинет",
-                    web_app=types.WebAppInfo(url=sub_url)
-                ))
-                
-                try:
-                    await bot.set_chat_menu_button(
-                        chat_id=tg_id,
-                        menu_button=types.MenuButtonWebApp(
-                            text="Кабинет",
-                            web_app=types.WebAppInfo(url=sub_url)
-                        )
-                    )
-                except Exception as e:
-                    logging.error(f"Failed to set menu button: {e}")
-                
                 await callback.message.answer(
                     f"✅ У тебя уже есть аккаунт!\n\n"
                     f"Твоя ссылка на подписку:\n`{sub_url}`\n\n"
-                    f"Добавь её в свой VPN клиент (v2rayNG, Streisand, V2Box и др.). Ты также можешь открыть Личный Кабинет в Telegram по кнопке ниже:",
-                    parse_mode="Markdown",
-                    reply_markup=builder.as_markup()
+                    f"Добавь её в свой VPN клиент (v2rayNG, Streisand, V2Box и др.)",
+                    parse_mode="Markdown"
                 )
             else:
                 await callback.message.answer("❌ Не удалось получить данные подписки. Обратитесь в поддержку.")
@@ -208,31 +151,12 @@ async def process_registration(callback: types.CallbackQuery):
         
         sub_url = f"https://{SUB_DOMAIN}/{short_uuid}" if short_uuid else "Ошибка генерации ссылки"
         
-        builder = InlineKeyboardBuilder()
-        if short_uuid:
-            builder.row(types.InlineKeyboardButton(
-                text="💼 Открыть личный кабинет",
-                web_app=types.WebAppInfo(url=sub_url)
-            ))
-            
-            try:
-                await bot.set_chat_menu_button(
-                    chat_id=tg_id,
-                    menu_button=types.MenuButtonWebApp(
-                        text="Кабинет",
-                        web_app=types.WebAppInfo(url=sub_url)
-                    )
-                )
-            except Exception as e:
-                logging.error(f"Failed to set menu button: {e}")
-        
         await callback.message.answer(
             f"🎉 Поздравляем! Твой аккаунт создан.\n\n"
             f"📅 Подписка активна на {TRIAL_DAYS} дней.\n"
             f"🔗 Твоя ссылка:\n`{sub_url}`\n\n"
-            f"Скопируй эту ссылку и импортируй её в приложение (V2Ray / Xray). Ты также можешь открыть Личный Кабинет прямо в Telegram по кнопке ниже:",
-            parse_mode="Markdown",
-            reply_markup=builder.as_markup()
+            f"Скопируй эту ссылку и импортируй её в приложение (V2Ray / Xray).",
+            parse_mode="Markdown"
         )
     
     await callback.answer()
